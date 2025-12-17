@@ -1,18 +1,88 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block title %}Навигатор{% endblock %}
-{% block content %}
-<h2>Навигатор (ссылки на страницы)</h2>
-<ul>
-    <li><a href="{% url 'book_list' %}">Список книг</a></li>
-    <li><a href="{% url 'book_list_page' page=1 %}">Список книг (страница 1)</a></li>
-    <li><a href="{% url 'book_list_page' page=2 %}">Список книг (страница 2)</a></li>
-    <li><a href="{% url 'tablica_display' %}">Таблицы (tablica)</a></li>
-</ul>
 
-<p>А также ручной ввод примеров:</p>
-<ul>
-    <li>Пример re_path: /book/Название-книги/</li>
-    <li>Пример re_path с годом: /book/Название-книги/2021/</li>
-    <li>Пример query string: /books/?q=python&per=5</li>
-</ul>
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-danger">Навигатор</h1>
+    <p class="mb-4">Быстрые ссылки на страницы и примеры ручного ввода:</p>
+
+    <!-- Карточки ссылок -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm nav-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Список книг</h5>
+                    <p class="card-text">Посмотреть все книги в магазине.</p>
+                    <a href="{% url 'book_list' %}" class="btn btn-primary">Перейти</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm nav-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Список книг (страница 1)</h5>
+                    <p class="card-text">Первая страница каталога книг.</p>
+                    <a href="{% url 'book_list_page' page=1 %}" class="btn btn-primary">Перейти</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm nav-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Список книг (страница 2)</h5>
+                    <p class="card-text">Вторая страница каталога книг.</p>
+                    <a href="{% url 'book_list_page' page=2 %}" class="btn btn-primary">Перейти</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm nav-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Таблицы (tablica)</h5>
+                    <p class="card-text">Просмотр данных в виде таблиц.</p>
+                    <a href="{% url 'tablica_display' %}" class="btn btn-primary">Перейти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ручной ввод примеров -->
+    <h3 class="mb-3 text-secondary">Ручной ввод примеров:</h3>
+    <ul class="list-group list-group-flush mb-5">
+        <li class="list-group-item">Пример re_path: /book/Название-книги/</li>
+        <li class="list-group-item">Пример re_path с годом: /book/Название-книги/2021/</li>
+        <li class="list-group-item">Пример query string: /books/?q=python&per=5</li>
+    </ul>
+
+    <a href="{% url 'index' %}" class="btn btn-success">Вернуться на главную</a>
+</div>
+
+<style>
+.nav-card {
+    border-radius: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.nav-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+    font-weight: 600;
+    color: #ff6f61;
+}
+
+.card-text {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.list-group-item {
+    font-size: 0.95rem;
+}
+</style>
 {% endblock %}

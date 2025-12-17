@@ -1,3 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+<h1>Добро пожаловать!</h1>
 <h2>Анализ заказов</h2>
 
 <form method="get">
@@ -64,3 +68,4 @@
 <p>Средняя сумма: {{ stats.avg_sum }}</p>
 
 <a href="{% url 'export_orders' %}?{{ request.GET.urlencode }}">Скачать CSV</a>
+{% endblock %}

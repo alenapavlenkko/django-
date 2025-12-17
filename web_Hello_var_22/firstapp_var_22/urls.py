@@ -15,15 +15,15 @@ urlpatterns = [
     path('buy/', views.buy_book, name='buy_book'),
     path('buy/<int:book_id>/', views.buy_book, name='buy_book_item'),
     path('thank_you/', views.thank_you, name='thank_you'),
-    path('analysis/', views.order_analysis, name='order_analysis'),
     path('products-demo/', views.products_demo, name='products_demo'),
-    path('simple-data/', views.simple_data, name='simple_data'),
+    path('reviews/', views.reviews, name='reviews'),
     path('export/', views.export_orders, name='export_orders'),
+    path('analysis/', views.analysis, name='analysis'),
 
     # Таблицы
-    path('tablica/', views.tablica_display, name='tablica_display'),
-    path('tablica/text/', views.tablica_from_text, name='tablica_text'),
-    path('tablica/xlsx/', views.tablica_from_xlsx, name='tablica_xlsx'),
+                  path('tablica/csv/', views.tablica_display, name='tablica_csv'),
+                  path('tablica/txt/', views.tablica_from_text, name='tablica_txt'),
+                  path('tablica/xlsx/', views.tablica_from_xlsx, name='tablica_xlsx'),
 
     # Редирект старого адреса
     path('old-books/', views.redirect_old_books, name='old_books'),

@@ -16,7 +16,6 @@ from .forms import PurchaseForm, BuyBookForm
 BASE_DIR = Path(__file__).resolve().parent
 TABLICA_DIR = BASE_DIR / 'tablica'
 
-
 # === Главные ===
 def index(request):
     return render(request, 'index.html')
@@ -180,33 +179,71 @@ def tablica_from_xlsx(request):
 
 
 def products_demo(request):
-    # читаем все 3 файла (txt/csv/xlsx)
+    print("=" * 60)
+    print("DEBUG: Функция products_demo вызвана")
+
     txt_rows, csv_rows, xlsx_rows = [], [], []
+
+    # --- Проверка TXT ---
     txt_file = TABLICA_DIR / 'books.txt'
+    print(f"TXT файл: {txt_file}")
+    print(f"TXT существует: {txt_file.exists()}")
+
     if txt_file.exists():
         with open(txt_file, encoding='utf-8') as f:
+            content = f.read()
+            print(f"TXT содержимое: {content[:200]}...")  # первые 200 символов
+            f.seek(0)  # вернуться в начало файла
             txt_rows = [line.strip().split(';') for line in f if line.strip()]
+            print(f"Прочитано {len(txt_rows)} строк из TXT")
+    else:
+        print("ОШИБКА: TXT файл не найден!")
+
+    # --- Проверка CSV ---
     csv_file = TABLICA_DIR / 'books.csv'
+    print(f"CSV файл: {csv_file}")
+    print(f"CSV существует: {csv_file.exists()}")
+
     if csv_file.exists():
         with open(csv_file, encoding='utf-8') as f:
-            csv_rows = [row for row in csv.reader(f, delimiter=';')]
+            reader = csv.reader(f, delimiter=';')
+            csv_rows = [row for row in reader]
+            print(f"Прочитано {len(csv_rows)} строк из CSV")
+    else:
+        print("ОШИБКА: CSV файл не найден!")
+
+    # --- Проверка XLSX ---
     xlsx_file = TABLICA_DIR / 'books.xlsx'
+    print(f"XLSX файл: {xlsx_file}")
+    print(f"XLSX существует: {xlsx_file.exists()}")
+
     if xlsx_file.exists():
-        wb = load_workbook(xlsx_file, read_only=True)
-        ws = wb.active
-        xlsx_rows = [list(row) for row in ws.iter_rows(values_only=True)]
-    return render(request, 'products_demo.html', {'txt_rows': txt_rows, 'csv_rows': csv_rows, 'xlsx_rows': xlsx_rows})
+        try:
+            wb = load_workbook(xlsx_file, read_only=True, data_only=True)
+            ws = wb.active
+            print(f"XLSX лист: {ws.title}")
+            print(f"XLSX размеры: {ws.max_row} строк, {ws.max_column} столбцов")
 
-def simple_data(request):
-    data = {
-        'number': 42,
-        'text': "Пример текста",
-        'flag': True,
-        'float_number': 3.14,
-        'none_value': None
-    }
-    return render(request, 'simple_data.html', data)
+            # Читаем все строки
+            xlsx_rows = []
+            for i, row in enumerate(ws.iter_rows(values_only=True), 1):
+                xlsx_rows.append(list(row))
+                if i <= 3:  # покажем первые 3 строки
+                    print(f"  Строка {i}: {list(row)}")
 
+            print(f"Прочитано {len(xlsx_rows)} строк из XLSX")
+        except Exception as e:
+            print(f"ОШИБКА при чтении XLSX: {e}")
+    else:
+        print("ОШИБКА: XLSX файл не найден!")
+
+    print("=" * 60)
+
+    return render(request, 'products_demo.html', {
+        'txt_rows': txt_rows,
+        'csv_rows': csv_rows,
+        'xlsx_rows': xlsx_rows
+    })
 def redirect_old_books(request):
     return redirect('web_Hello_var_22:book_list')
 
@@ -280,3 +317,69 @@ def export_orders(request):
         writer.writerow([o.id, o.customer.name, o.category.name, o.order_date, o.total_amount])
 
     return response
+
+def analysis(request):
+    return render(request, 'analysis.html')
+
+def reviews(request):
+    sample_reviews = [
+        {'author': 'Иван', 'text': 'Очень хорошая книга!'},
+        {'author': 'Мария', 'text': 'Доставка была быстрой, спасибо!'},
+        {'author': 'Алексей', 'text': 'Большой выбор и отличное обслуживание.'},
+    ]
+    return render(request, 'reviews.html', {'reviews': sample_reviews})
+
+# firstapp_var_22/views.py
+from pathlib import Path
+from openpyxl import load_workbook
+
+from django.shortcuts import render
+
+BASE_DIR = Path(__file__).resolve().parent
+TABLICA_DIR = BASE_DIR / 'tablica'
+
+def files_books(request):
+    text_lines = []
+    excel_books = []
+
+    # --- Текстовый файл ---
+    txt_file = TABLICA_DIR / 'books.txt'
+    if txt_file.exists():
+        with open(txt_file, encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    # Формат: название;автор;цена;продавец
+                    parts = line.split(';')
+                    if len(parts) >= 4:
+                        text_lines.append(f"{parts[0]} — {parts[1]} — {parts[2]} ₽ — {parts[3]}")
+    else:
+        print("TXT файл не найден:", txt_file)
+
+    # --- Excel файл ---
+    xlsx_file = TABLICA_DIR / 'books.xlsx'
+    if xlsx_file.exists():
+        wb = load_workbook(xlsx_file, read_only=True)
+        ws = wb.active
+        rows = list(ws.iter_rows(values_only=True))
+        if rows:
+            headers = rows[0]  # первая строка как заголовки
+            for row in rows[1:]:
+                book_data = dict(zip(headers, row))
+                # Убедимся, что ключи соответствуют шаблону
+                excel_books.append({
+                    'title': book_data.get('название', 'Нет названия'),
+                    'author': book_data.get('автор', 'Нет автора'),
+                    'price': book_data.get('цена', '0'),
+                    'stock': book_data.get('продавец', 'Нет информации'),
+                    'image_url': book_data.get('image_url', None),  # если есть изображения
+                })
+    else:
+        print("XLSX файл не найден:", xlsx_file)
+
+    context = {
+        'text_lines': text_lines,
+        'excel_books': excel_books,
+    }
+    return render(request, 'products_demo.html', context)
+

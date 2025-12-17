@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Отзывы{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-danger">Отзывы наших клиентов</h1>
+
+    {% if reviews %}
+        <div class="row g-4">
+            {% for review in reviews %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-sm h-100 review-card">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">{{ review.author }}</h5>
+                        <p class="card-text">{{ review.text }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Пока нет отзывов.</p>
+    {% endif %}
+
+    <a href="{% url 'index' %}" class="btn btn-success mt-4">Вернуться на главную</a>
+</div>
+
+<style>
+.review-card {
+    border-radius: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+    font-weight: 600;
+}
+
+.card-text {
+    font-size: 0.95rem;
+    color: #555;
+}
+</style>
+{% endblock %}
