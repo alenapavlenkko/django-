@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Заказ успешно создан</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+</head>
+<body class="container mt-4">
+    <h1>Спасибо за заказ!</h1>
+    <p>Ваш заказ <strong>#{{ purchase.id }}</strong> успешно создан.</p>
+    <p>Статус: <strong>{{ purchase.get_status_display }}</strong></p>
+    <p>Способ оплаты: <strong>{{ purchase.get_payment_method_display }}</strong></p>
+    <p>Адрес доставки: {{ purchase.shipping_address }}</p>
+    {% if purchase.notes %}
+        <p>Примечания: {{ purchase.notes }}</p>
+    {% endif %}
+
+    <h3>Состав заказа:</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Книга</th>
+                <th>Количество</th>
+                <th>Цена за шт.</th>
+                <th>Итого</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in purchase.items.all %}
+                <tr>
+                    <td>
+                        <a href="{% url 'book_detail' slug=item.book.slug %}">{{ item.book.title }}</a>
+                    </td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.price }} ₽</td>
+                    <td>{{ item.total_price }} ₽</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3" class="text-end">Общая сумма:</th>
+                <th>{{ purchase.total }} ₽</th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <a href="{% url 'book_list' %}" class="btn btn-success">Вернуться к книгам</a>
+</body>
+</html>

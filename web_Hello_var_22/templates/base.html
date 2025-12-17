@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}Книжный магазин{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Книжный магазин — Вариант 22</h1>
+        <nav>
+            <a href="{% url 'index' %}">Главная</a> |
+            <a href="{% url 'navigator' %}">Навигатор</a> |
+            <a href="{% url 'book_list' %}">Книги</a> |
+            <a href="{% url 'products_demo' %}">Книги из файлов</a> |
+            <a href="{% url 'tablica_display' %}">Таблицы</a> |
+            <a href="{% url 'buy_book' %}">Купить книгу</a>
+        </nav>
+    </header>
+
+    {% block content %}
+    <!-- контент страницы -->
+    {% endblock %}
+
+</body>
+</html>

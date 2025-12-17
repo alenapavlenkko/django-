@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+<div class="book-detail">
+    <h1>{{ book.title }}</h1>
+    {% if book.image %}
+        <img src="{{ book.image.url }}" alt="{{ book.title }}" class="book-image-large">
+    {% endif %}
+    <p><strong>Авторы:</strong>
+        {% for author in book.authors.all %}
+            {{ author.first_name }} {{ author.last_name }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+    <p><strong>Цена:</strong> {{ book.price }} руб.</p>
+    <p><strong>Категория:</strong> {{ book.category.name }}</p>
+    <p>{{ book.description }}</p>
+
+    <a href="{% url 'buy_book_form' %}?book_id={{ book.id }}" class="btn btn-success">Купить эту книгу</a>
+</div>
+{% endblock %}

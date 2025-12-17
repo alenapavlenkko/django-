@@ -1,0 +1,56 @@
+<h2>Анализ данных</h2>
+
+<form method="get">
+    Категория:
+    <select name="category">
+        <option value="">Все</option>
+        {% for c in categories %}
+            <option value="{{ c.id }}">{{ c.name }}</option>
+        {% endfor %}
+    </select>
+
+    Дата с:
+    <input type="date" name="date_from">
+
+    Дата по:
+    <input type="date" name="date_to">
+
+    Сортировка:
+    <select name="sort">
+        <option value="date">По дате ↑</option>
+        <option value="-date">По дате ↓</option>
+        <option value="amount">По сумме ↑</option>
+        <option value="-amount">По сумме ↓</option>
+    </select>
+
+    <button type="submit">Применить</button>
+</form>
+
+<hr>
+
+<h3>Результаты</h3>
+<table border="1">
+    <tr>
+        <th>Дата</th>
+        <th>Категория</th>
+        <th>Сумма</th>
+    </tr>
+    {% for o in orders %}
+    <tr>
+        <td>{{ o.date }}</td>
+        <td>{{ o.category }}</td>
+        <td>{{ o.amount }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<hr>
+
+<h3>Агрегатные показатели</h3>
+<p>Количество записей: {{ stats.total_count }}</p>
+<p>Общая сумма: {{ stats.total_sum }}</p>
+<p>Среднее значение: {{ stats.avg_sum }}</p>
+
+<a href="{% url 'export_orders' %}?{{ request.GET.urlencode }}">
+    Скачать отчет (CSV)
+</a>

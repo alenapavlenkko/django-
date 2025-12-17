@@ -1,0 +1,154 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Оформление заказа</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f7f9fc;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .order-container {
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        .card-book {
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .card-book:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-book img {
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            object-fit: cover;
+            max-height: 250px;
+            width: 100%;
+        }
+
+        .form-section {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background-color: #ff6f61;
+            border-color: #ff6f61;
+            font-size: 1.1rem;
+            padding: 12px;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #ff3b2e;
+        }
+
+        @media (max-width: 767px) {
+            .card-book img {
+                max-height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container order-container">
+    <div class="row g-4">
+
+        <!-- Левая колонка: карточка книги -->
+        {% if book %}
+        <div class="col-lg-5 col-md-12">
+            <div class="card card-book">
+                {% if book.image %}
+                    <img src="{{ book.image.url }}" alt="{{ book.title }}" class="card-img-top">
+                {% else %}
+                    <img src="{% static 'images/no-image.png' %}" alt="Нет изображения" class="card-img-top">
+                {% endif %}
+                <div class="card-body">
+                    <h4 class="card-title">{{ book.title }}</h4>
+                    {% if book.authors.all %}
+                        <p><strong>Автор:</strong> {{ book.authors.all|join:", " }}</p>
+                    {% endif %}
+                    <p><strong>Цена:</strong> {{ book.price }} ₽</p>
+                    <p><strong>На складе:</strong> {{ book.stock }} шт.</p>
+                    {% if book.category %}
+                        <p><strong>Категория:</strong> {{ book.category.name }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Правая колонка: форма заказа -->
+        <div class="col-lg-7 col-md-12">
+            <div class="form-section">
+                <h2 class="mb-4 text-danger">Оформление заказа</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.name.id_for_label }}">Ваше имя</label>
+                        {{ form.name|add_class:"form-control" }}
+                        {{ form.name.errors }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.email.id_for_label }}">Электронная почта</label>
+                        {{ form.email|add_class:"form-control" }}
+                        {{ form.email.errors }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.quantity.id_for_label }}">Количество</label>
+                        {{ form.quantity|add_class:"form-control" }}
+                        {{ form.quantity.errors }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.payment_method.id_for_label }}">Способ оплаты</label>
+                        {{ form.payment_method|add_class:"form-select" }}
+                        {{ form.payment_method.errors }}
+                    </div>
+
+                    {% if form.extras %}
+                    <div class="mb-3">
+                        <label class="form-label">Дополнительно</label>
+                        {{ form.extras }}
+                        {{ form.extras.errors }}
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label class="form-label" for="{{ form.notes.id_for_label }}">Примечания</label>
+                        {{ form.notes|add_class:"form-control" }}
+                        {{ form.notes.errors }}
+                    </div>
+
+                    {% if book %}
+                        <input type="hidden" name="book_id" value="{{ book.id }}">
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-primary w-100">Оформить заказ</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Тест статических файлов{% endblock %}
+
+{% block content %}
+<h2>Тестирование статических файлов</h2>
+
+<div class="book-container">
+    <div class="book-card">
+        <img src="{% static 'images/python-book.jpg' %}" alt="Тест Python" class="book-image">
+        <div class="book-info">
+            <h3>Python книга</h3>
+            <p>Тестовое изображение Python</p>
+        </div>
+    </div>
+
+    <div class="book-card">
+        <img src="{% static 'images/django-book.jpg' %}" alt="Тест Django" class="book-image">
+        <div class="book-info">
+            <h3>Django книга</h3>
+            <p>Тестовое изображение Django</p>
+        </div>
+    </div>
+</div>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Изображение</th>
+            <th>Название</th>
+            <th>Статус</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><img src="{% static 'images/book-cover.jpg' %}" alt="Обложка" style="width: 50px; height: 50px; object-fit: cover;"></td>
+            <td>book-cover.jpg</td>
+            <td>✅ Загружено</td>
+        </tr>
+        <tr>
+            <td>CSS стили</td>
+            <td>styles.css</td>
+            <td>✅ Применены</td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}

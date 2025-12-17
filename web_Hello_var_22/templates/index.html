@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Главная страница - Книжный магазин{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h2>Добро пожаловать в наш книжный магазин!</h2>
+    <img src="{% static 'images/glav.jpg' %}" alt="Книжный магазин" style="max-width: 600px; width: 100%; border-radius: 10px; margin: 20px 0;">
+</div>
+
+<div class="book-container">
+    <div class="book-card">
+        <img src="{% static 'images/python-book.jpg' %}" alt="Python для начинающих" class="book-image">
+        <div class="book-info">
+            <h3>Python для начинающих</h3>
+            <p><strong>Автор:</strong> Иван Иванов</p>
+            <p><strong>Цена:</strong> 499 руб.</p>
+            <p><strong>Продавец:</strong> Книжный центр</p>
+            <a href="{% url 'buy_book' %}" class="btn btn-success">Купить книгу</a>
+        </div>
+    </div>
+
+    <div class="book-card">
+        <img src="{% static 'images/django-book.jpg' %}" alt="Django в действии" class="book-image">
+        <div class="book-info">
+            <h3>Django в действии</h3>
+            <p><strong>Автор:</strong> Пётр Петров</p>
+            <p><strong>Цена:</strong> 799 руб.</p>
+            <p><strong>Продавец:</strong> IT Книги</p>
+            <a href="{% url 'buy_book' %}" class="btn btn-success">Купить книгу</a>
+        </div>
+    </div>
+
+    <div class="book-card">
+        <img src="{% static 'images/str3.jpg' %}" alt="Алгоритмы" class="book-image">
+        <div class="book-info">
+            <h3>Алгоритмы</h3>
+            <p><strong>Автор:</strong> А. Н. Сидоров</p>
+            <p><strong>Цена:</strong> 1200 руб.</p>
+            <p><strong>Продавец:</strong> Умная Книга</p>
+            <a href="{% url 'buy_book' %}" class="btn btn-success">Купить книгу</a>
+        </div>
+    </div>
+</div>
+
+<div class="mt-20">
+    <h3>Почему выбирают нас?</h3>
+    <ul>
+        <li>📚 Широкий выбор книг по программированию</li>
+        <li>🚚 Быстрая доставка по всей стране</li>
+        <li>💯 Гарантия качества всех товаров</li>
+        <li>📞 Круглосуточная поддержка клиентов</li>
+    </ul>
+</div>
+{% endblock %}

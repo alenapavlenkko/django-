@@ -1,0 +1,66 @@
+<h2>Анализ заказов</h2>
+
+<form method="get">
+    Категория:
+    <select name="category">
+        <option value="">Все</option>
+        {% for c in categories %}
+            <option value="{{ c.id }}">{{ c.name }}</option>
+        {% endfor %}
+    </select>
+
+    Клиент:
+    <select name="customer">
+        <option value="">Все</option>
+        {% for cu in customers %}
+            <option value="{{ cu.id }}">{{ cu.name }}</option>
+        {% endfor %}
+    </select>
+
+    Дата с:
+    <input type="date" name="date_from">
+
+    Дата по:
+    <input type="date" name="date_to">
+
+    Сортировка:
+    <select name="sort">
+        <option value="order_date">По дате ↑</option>
+        <option value="-order_date">По дате ↓</option>
+        <option value="total_amount">По сумме ↑</option>
+        <option value="-total_amount">По сумме ↓</option>
+    </select>
+
+    <button type="submit">Применить</button>
+</form>
+
+<hr>
+
+<h3>Результаты</h3>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Клиент</th>
+        <th>Категория</th>
+        <th>Дата</th>
+        <th>Сумма</th>
+    </tr>
+    {% for o in orders %}
+    <tr>
+        <td>{{ o.id }}</td>
+        <td>{{ o.customer.name }}</td>
+        <td>{{ o.category.name }}</td>
+        <td>{{ o.order_date }}</td>
+        <td>{{ o.total_amount }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<hr>
+
+<h3>Агрегаты</h3>
+<p>Количество заказов: {{ stats.total_count }}</p>
+<p>Общая сумма: {{ stats.total_sum }}</p>
+<p>Средняя сумма: {{ stats.avg_sum }}</p>
+
+<a href="{% url 'export_orders' %}?{{ request.GET.urlencode }}">Скачать CSV</a>

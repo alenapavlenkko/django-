@@ -1,0 +1,106 @@
+CREATE TABLE IF NOT EXISTS auth_user (
+  id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  username varchar(150)
+);
+-- Таблица категорий
+CREATE TABLE "firstapp_var_22_category" (
+    "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    "name" varchar(100) NOT NULL UNIQUE,
+    "slug" varchar(100) NOT NULL UNIQUE,
+    "description" text NOT NULL,
+    "created" timestamp without time zone NOT NULL DEFAULT now()
+);
+
+-- Таблица авторов
+CREATE TABLE "firstapp_var_22_author" (
+    "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    "first_name" varchar(100) NOT NULL,
+    "last_name" varchar(100) NOT NULL,
+    "bio" text NOT NULL,
+    "photo" varchar(100),
+    "birth_date" date
+);
+
+-- Таблица издательств
+CREATE TABLE "firstapp_var_22_publisher" (
+    "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    "name" varchar(200) NOT NULL UNIQUE,
+    "address" text NOT NULL,
+    "phone" varchar(20) NOT NULL,
+    "email" varchar(254) NOT NULL,
+    "website" varchar(200) NOT NULL
+);
+
+-- Таблица книг
+CREATE TABLE "firstapp_var_22_book" (
+    "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    "title" varchar(200) NOT NULL,
+    "slug" varchar(200) NOT NULL UNIQUE,
+    "isbn" varchar(17) NOT NULL,
+    "description" text NOT NULL,
+    "price" numeric(10,2) NOT NULL,
+    "cover_type" varchar(10) NOT NULL,
+    "pages" integer NOT NULL CHECK (pages >= 0),
+    "publication_year" integer NOT NULL CHECK (publication_year >= 0),
+    "stock" integer NOT NULL CHECK (stock >= 0),
+    "available" boolean NOT NULL,
+    "image" varchar(100),
+    "created" timestamp without time zone NOT NULL DEFAULT now(),
+    "updated" timestamp without time zone NOT NULL DEFAULT now(),
+    "category_id" integer NOT NULL REFERENCES "firstapp_var_22_category" ("id"),
+    "publisher_id" integer REFERENCES "firstapp_var_22_publisher" ("id")
+);
+
+-- Связь многие-ко-многим книги-авторы
+CREATE TABLE "firstapp_var_22_book_author" (
+    "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    "book_id" integer NOT NULL REFERENCES "firstapp_var_22_book" ("id"),
+    "author_id" integer NOT NULL REFERENCES "firstapp_var_22_author" ("id"),
+    CONSTRAINT "uq_book_author" UNIQUE ("book_id", "author_id")
+);
+
+-- Таблица клиентов
+CREATE TABLE "firstapp_var_22_customer" (
+    "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    "phone" varchar(20) NOT NULL,
+    "address" text NOT NULL,
+    "date_of_birth" date,
+    "registration_date" timestamp without time zone NOT NULL DEFAULT now(),
+    "user_id" integer UNIQUE REFERENCES "auth_user" ("id")
+);
+
+-- Таблица покупок
+CREATE TABLE "firstapp_var_22_purchase" (
+    "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    "status" varchar(20) NOT NULL,
+    "payment_method" varchar(10) NOT NULL,
+    "payment_status" boolean NOT NULL,
+    "shipping_address" text NOT NULL,
+    "total" numeric(12,2) NOT NULL,
+    "notes" text NOT NULL,
+    "created" timestamp without time zone NOT NULL DEFAULT now(),
+    "updated" timestamp without time zone NOT NULL DEFAULT now(),
+    "customer_id" integer NOT NULL REFERENCES "firstapp_var_22_customer" ("id")
+);
+
+-- Таблица позиций заказа
+CREATE TABLE "firstapp_var_22_purchaseitem" (
+    "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    "quantity" integer NOT NULL CHECK (quantity >= 0),
+    "price" numeric(10,2) NOT NULL,
+    "book_id" integer NOT NULL REFERENCES "firstapp_var_22_book" ("id"),
+    "purchase_id" integer NOT NULL REFERENCES "firstapp_var_22_purchase" ("id")
+);
+
+-- Таблица отзывов
+CREATE TABLE "firstapp_var_22_review" (
+    "id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    "rating" smallint NOT NULL CHECK (rating >= 0),
+    "title" varchar(200) NOT NULL,
+    "comment" text NOT NULL,
+    "created" timestamp without time zone NOT NULL DEFAULT now(),
+    "updated" timestamp without time zone NOT NULL DEFAULT now(),
+    "approved" boolean NOT NULL,
+    "book_id" integer NOT NULL REFERENCES "firstapp_var_22_book" ("id"),
+    "customer_id" integer NOT NULL REFERENCES "firstapp_var_22_customer" ("id")
+);

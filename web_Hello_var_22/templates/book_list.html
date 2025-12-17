@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Каталог книг{% endblock %}
+
+{% block content %}
+<h1>Каталог книг</h1>
+
+<div class="book-container">
+    {% for book in books %}
+    <div class="book-card">
+        <img src="{% if book.image %}{{ book.image.url }}{% else %}{% static 'images/book-cover.jpg' %}{% endif %}"
+             alt="Обложка {{ book.title }}" class="book-image">
+        <div class="book-info">
+            <h3>{{ book.title }}</h3>
+            <p><strong>Цена:</strong> {{ book.price }} руб.</p>
+            <p><strong>Категория:</strong> {{ book.category.name }}</p>
+            <a href="{% url 'buy_book' %}?book_id={{ book.id }}" class="btn btn-success">Купить</a>
+            <a href="{% url 'book_detail' book.slug %}" class="btn btn-primary">Подробнее</a>
+        </div>
+    </div>
+    {% empty %}
+    <p>Книги не найдены.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}
