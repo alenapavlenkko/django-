@@ -59,6 +59,11 @@ DATABASES = {
         'PASSWORD': 'secure_password_123',
         'HOST': 'localhost',
         'PORT': '5432',
+        'OPTIONS': {
+            'client_encoding': 'UTF8',  # Кодировка соединения
+        },
+        'CONN_MAX_AGE': 600,  # Время жизни соединения в секундах
+        'ATOMIC_REQUESTS': True,  # Транзакции для каждого запроса
     }
 }
 
