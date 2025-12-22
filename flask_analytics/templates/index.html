@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card bg-primary">
+            <h3>{{ stats.total_books or 0 }}</h3>
+            <p>Книг в каталоге</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-success">
+            <h3>{{ stats.total_orders or 0 }}</h3>
+            <p>Всего заказов</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-info">
+            <h3>{{ stats.total_users or 0 }}</h3>
+            <p>Клиентов</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-warning text-dark">
+            <h3>{{ "%.2f"|format(stats.total_revenue|float|default(0)) }} ₽</h3>
+            <p>Общая выручка</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                Последние заказы
+                <a href="/orders" class="btn btn-sm btn-primary float-end">Все заказы</a>
+            </div>
+            <div class="card-body">
+                {% if recent_orders %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Дата</th>
+                                <th>Клиент</th>
+                                <th>Сумма</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders %}
+                            <tr>
+                                <td>#{{ order.id }}</td>
+                                <td>{{ order.created|dateformat }}</td>  <!-- ИСПРАВЛЕНО -->
+                                <td>{{ order.username or 'Гость' }}</td>
+                                <td>{{ "%.2f"|format(order.total|float|default(0)) }} ₽</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center">Нет заказов</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                Топ книг по наличию
+                <a href="/books" class="btn btn-sm btn-primary float-end">Все книги</a>
+            </div>
+            <div class="card-body">
+                {% if top_books %}
+                <div class="list-group">
+                    {% for book in top_books %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong>{{ book.title[:30] }}{% if book.title|length > 30 %}...{% endif %}</strong>
+                                <div class="text-muted small">{{ book.authors }}</div>
+                            </div>
+                            <div class="text-end">
+                                <div>{{ "%.2f"|format(book.price|float|default(0)) }} ₽</div>
+                                <span class="badge bg-{% if book.stock > 10 %}success{% elif book.stock > 0 %}warning{% else %}danger{% endif %}">
+                                    {{ book.stock }} шт.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted text-center">Нет данных о книгах</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                Быстрые действия
+            </div>
+            <div class="card-body text-center">
+                <div class="btn-group flex-wrap">
+                    <a href="/books" class="btn btn-outline-primary m-1">📚 Просмотр книг</a>
+                    <a href="/orders" class="btn btn-outline-success m-1">🛒 Просмотр заказов</a>
+                    <a href="/customers" class="btn btn-outline-info m-1">👥 Просмотр клиентов</a>
+                    <a href="/analytics" class="btn btn-outline-warning m-1">📈 Аналитика</a>
+                    <a href="/export/books/csv" class="btn btn-outline-secondary m-1">📥 Экспорт книг</a>
+                    <a href="/export/orders/csv" class="btn btn-outline-secondary m-1">📥 Экспорт заказов</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        О системе
+    </div>
+    <div class="card-body">
+        <p>Данная аналитическая панель предназначена для анализа данных книжного магазина.</p>
+        <p><strong>Основные функции:</strong></p>
+        <ul>
+            <li>Просмотр и фильтрация каталога книг</li>
+            <li>Анализ заказов и продаж</li>
+            <li>Управление клиентской базой</li>
+            <li>Экспорт данных в CSV формате</li>
+            <li>Поиск по всем данным системы</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

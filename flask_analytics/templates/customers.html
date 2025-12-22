@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Клиенты{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">👥 Клиенты ({{ total_customers }})</h1>
+
+<!-- Поиск -->
+<div class="card mb-4">
+    <div class="card-header">Поиск клиентов</div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-8">
+                <input type="text" class="form-control" name="search"
+                       placeholder="Поиск по имени пользователя или email"
+                       value="{{ search }}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Найти</button>
+            </div>
+            <div class="col-md-2">
+                <a href="/customers" class="btn btn-secondary w-100">Сбросить</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Список клиентов -->
+<div class="card">
+    <div class="card-header">Список клиентов</div>
+    <div class="card-body">
+        {% if customers %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Имя пользователя</th>
+                        <th>Email</th>
+                        <th>Имя</th>
+                        <th>Фамилия</th>
+                        <th>Дата регистрации</th>
+                        <th>Заказов</th>
+                        <th>Потрачено</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in customers %}
+                    <tr>
+                        <td>{{ customer.id }}</td>
+                        <td>{{ customer.username }}</td>
+                        <td>{{ customer.email }}</td>
+                        <td>{{ customer.first_name or '-' }}</td>
+                        <td>{{ customer.last_name or '-' }}</td>
+                       <td>{{ customer.date_joined|dateformat }}</td>
+                        <td>{{ customer.order_count }}</td>
+                        <td>{{ "%.2f"|format(customer.total_spent|float|default(0)) }} ₽</td>
+                        <td>
+                            {% if customer.is_active %}
+                            <span class="badge bg-success">Активен</span>
+                            {% else %}
+                            <span class="badge bg-danger">Неактивен</span>
+                            {% endif %}
+                            {% if customer.is_staff %}
+                            <span class="badge bg-warning ms-1">Персонал</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Пагинация -->
+        {% if total_pages > 1 %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page-1 }}&search={{ search }}">
+                        Назад
+                    </a>
+                </li>
+                {% endif %}
+
+                <li class="page-item active">
+                    <span class="page-link">
+                        Страница {{ page }} из {{ total_pages }}
+                    </span>
+                </li>
+
+                {% if page < total_pages %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page+1 }}&search={{ search }}">
+                        Вперед
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <div class="text-center py-4">
+            <h4 class="text-muted">Клиенты не найдены</h4>
+            <p class="text-muted">Измените параметры поиска</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Информация -->
+<div class="card mt-4">
+    <div class="card-header">
+        О разделе "Клиенты"
+    </div>
+    <div class="card-body">
+        <p>В этом разделе вы можете:</p>
+        <ul>
+            <li>Просматривать полный список клиентов</li>
+            <li>Искать клиентов по имени или email</li>
+            <li>Видеть статистику по заказам каждого клиента</li>
+            <li>Анализировать активность клиентов</li>
+            <li>Определять VIP-клиентов по сумме покупок</li>
+        </ul>
+        <p><strong>Источник данных:</strong> таблица <code>firstapp_var_22_user</code></p>
+        <p><strong>Статистика заказов:</strong> рассчитывается на основе таблицы <code>firstapp_var_22_order</code></p>
+    </div>
+</div>
+{% endblock %}

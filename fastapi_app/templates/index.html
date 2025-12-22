@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block extra_css %}
+<style>
+    .welcome {
+        text-align: center;
+        margin: 30px 0;
+    }
+    .welcome h2 {
+        color: #333;
+        margin-bottom: 15px;
+    }
+    .info-card {
+        background: #f9f9f9;
+        padding: 25px;
+        border-radius: 8px;
+        margin: 30px 0;
+        border-left: 4px solid #4a6fa5;
+    }
+    .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin: 25px 0;
+    }
+    .link-card {
+        flex: 1;
+        min-width: 250px;
+        background: white;
+        padding: 20px;
+        border-radius: 6px;
+        border: 1px solid #eaeaea;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .link-card h3 {
+        margin-top: 0;
+        color: #333;
+    }
+    .book-count {
+        background: #4a6fa5;
+        color: white;
+        padding: 15px;
+        border-radius: 6px;
+        font-size: 1.2em;
+        display: inline-block;
+        margin: 15px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="welcome">
+    <h2>Добро пожаловать в книжный магазин!</h2>
+    <p>Это FastAPI приложение подключено к базе данных вашего Django проекта.</p>
+
+    {% if db_connected %}
+        <div class="book-count">
+            📚 Книг в базе: <strong>{{ book_count }}</strong>
+        </div>
+    {% else %}
+        <div style="background: #ffebee; color: #c62828; padding: 15px; border-radius: 6px; margin: 15px 0;">
+            ⚠️ Нет подключения к базе данных
+        </div>
+    {% endif %}
+</div>
+
+<div class="info-card">
+    <h3>🔗 Быстрые ссылки</h3>
+    <div class="links">
+        <div class="link-card">
+            <h3>📖 Книги</h3>
+            <p>Просмотр каталога книг из базы данных</p>
+            <a href="/books" style="color: #4a6fa5; font-weight: bold;">Перейти к книгам →</a>
+        </div>
+
+        <div class="link-card">
+            <h3>📚 API Документация</h3>
+            <p>Swagger UI документация всех API эндпоинтов</p>
+            <a href="/docs" style="color: #4a6fa5; font-weight: bold;">Открыть документацию →</a>
+        </div>
+
+        <div class="link-card">
+            <h3>📋 JSON API</h3>
+            <p>Получить данные книг в формате JSON</p>
+            <a href="/api/books" style="color: #4a6fa5; font-weight: bold;">API книг (JSON) →</a>
+        </div>
+    </div>
+</div>
+
+<div class="info-card">
+    <h3>ℹ️ Информация о системе</h3>
+    <p><strong>База данных:</strong> {{ db_name }}</p>
+    <p><strong>Статус подключения:</strong>
+        {% if db_connected %}
+            <span style="color: #2e7d32;">✅ Подключено</span>
+        {% else %}
+            <span style="color: #c62828;">❌ Не подключено</span>
+        {% endif %}
+    </p>
+    <p><strong>Таблица книг:</strong> firstapp_var_22_book</p>
+    <p><strong>Технология:</strong> FastAPI + PostgreSQL</p>
+</div>
+{% endblock %}

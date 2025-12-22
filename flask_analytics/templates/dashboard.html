@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Дашборд{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">📊 Дашборд аналитики</h1>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card bg-primary">
+            <h3>{{ "%.0f"|format(stats.total_orders|default(0)) }}</h3>
+            <p>Всего заказов</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-success">
+            <h3>{{ "%.2f"|format(stats.total_revenue|float|default(0)) }} ₽</h3>
+            <p>Общая выручка</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-info">
+            <h3>{{ "%.0f"|format(stats.active_customers|default(0)) }}</h3>
+            <p>Активных клиентов</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-warning text-dark">
+            <h3>{{ "%.2f"|format(stats.avg_order_value|float|default(0)) }} ₽</h3>
+            <p>Средний чек</p>
+        </div>
+    </div>
+</div>
+
+{% if today_stats %}
+<div class="card mb-4">
+    <div class="card-header">
+        Статистика за сегодня ({{ today_date }})
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p>Заказов: <strong>{{ today_stats.today_orders }}</strong></p>
+            </div>
+            <div class="col-md-6">
+                <p>Выручка: <strong>{{ "%.2f"|format(today_stats.today_revenue|float|default(0)) }} ₽</strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Продажи за 7 дней</div>
+            <div class="card-body">
+                {% if weekly_sales %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Заказов</th>
+                                <th>Выручка</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for day in weekly_sales %}
+                            <tr>
+                                <td>{{ day.date }}</td>
+                                <td>{{ day.orders_count }}</td>
+                                <td>{{ "%.2f"|format(day.daily_revenue|float|default(0)) }} ₽</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center">Нет данных о продажах</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Топ категорий по выручке</div>
+            <div class="card-body">
+                {% if top_categories %}
+                <div class="list-group">
+                    {% for cat in top_categories %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ cat.category }}</strong>
+                                <div class="text-muted small">Продано: {{ cat.items_sold }} шт.</div>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold">{{ "%.2f"|format(cat.revenue|float|default(0)) }} ₽</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted text-center">Нет данных по категориям</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        Информация о системе
+    </div>
+    <div class="card-body">
+        <p><strong>Источник данных:</strong> PostgreSQL база данных Django проекта</p>
+        <p><strong>Основные таблицы:</strong></p>
+        <ul>
+            <li><code>firstapp_var_22_book</code> - Книги</li>
+            <li><code>firstapp_var_22_order</code> - Заказы</li>
+            <li><code>firstapp_var_22_user</code> - Пользователи</li>
+            <li><code>firstapp_var_22_orderitem</code> - Позиции заказов</li>
+            <li><code>firstapp_var_22_category</code> - Категории</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

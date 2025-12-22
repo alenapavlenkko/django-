@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История заказов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .order-list {
+            margin-top: 20px;
+        }
+        .order-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .no-orders {
+            color: #666;
+            font-style: italic;
+        }
+        h1 {
+            color: #333;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: #0066cc;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Исправленная ссылка - используйте 'index' вместо 'home' -->
+    <a href="{% url 'index' %}" class="back-link">← На главную</a>
+    <!-- ИЛИ альтернатива: -->
+    <!-- <a href="/" class="back-link">← На главную</a> -->
+
+    <h1>История заказов</h1>
+
+    <div class="order-list">
+        {% if orders %}
+            {% for order in orders %}
+                <div class="order-item">
+                    <h3>Заказ #{{ order.id }}</h3>
+                    <p><strong>Дата создания:</strong> {{ order.created_at|date:"d.m.Y H:i" }}</p>
+                    <p><strong>Статус:</strong> {{ order.status }}</p>
+                    <p><strong>Общая сумма:</strong> {{ order.total_amount }} руб.</p>
+
+                    {% if order.orderitem_set.all %}
+                        <p><strong>Книги:</strong></p>
+                        <ul>
+                            {% for item in order.orderitem_set.all %}
+                                <li>{{ item.book.title }} - {{ item.quantity }} шт. × {{ item.price }} руб.</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p><strong>Книги:</strong> Информация о книгах недоступна</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-orders">Заказов пока нет.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

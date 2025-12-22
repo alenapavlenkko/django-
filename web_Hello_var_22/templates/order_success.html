@@ -1,0 +1,374 @@
+<!-- templates/order_success.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Заказ успешно оформлен - Книжный магазин{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-container {
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1rem;
+    }
+
+    .success-card {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        max-width: 800px;
+        width: 100%;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .success-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .success-icon {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        font-size: 3.5rem;
+        color: white;
+        animation: bounce 1s ease infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .success-title {
+        font-size: 2.5rem;
+        color: #1f2937;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+
+    .success-subtitle {
+        font-size: 1.2rem;
+        color: #6b7280;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    .order-info {
+        background: #f9fafb;
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+        text-align: left;
+        border: 2px solid #e5e7eb;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .info-value {
+        color: #1f2937;
+        font-weight: 600;
+    }
+
+    .highlight {
+        color: #059669;
+        font-weight: 700;
+    }
+
+    .order-number {
+        font-size: 1.8rem;
+        color: #059669;
+        font-weight: 700;
+        margin: 1rem 0;
+    }
+
+    .order-items {
+        margin-top: 1.5rem;
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem;
+        background: white;
+        border-radius: 10px;
+        margin-bottom: 0.75rem;
+        border: 1px solid #e5e7eb;
+    }
+
+    .item-title {
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .item-details {
+        color: #6b7280;
+        font-size: 0.95rem;
+    }
+
+    .item-price {
+        font-weight: 600;
+        color: #059669;
+    }
+
+    .total-amount {
+        font-size: 1.8rem;
+        color: #1f2937;
+        font-weight: 700;
+        margin: 1.5rem 0;
+    }
+
+    .actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2.5rem;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-secondary {
+        background: #f9fafb;
+        color: #4b5563;
+        border: 2px solid #d1d5db;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e7eb;
+        transform: translateY(-3px);
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+    }
+
+    .btn-success:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .contact-info {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #e5e7eb;
+        color: #6b7280;
+        font-size: 0.95rem;
+    }
+
+    .contact-info a {
+        color: #3b82f6;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .contact-info a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .success-card {
+            padding: 2rem 1.5rem;
+        }
+
+        .success-title {
+            font-size: 2rem;
+        }
+
+        .success-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .order-info {
+            padding: 1.5rem;
+        }
+
+        .actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .info-row {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-card">
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <h1 class="success-title">Заказ успешно оформлен!</h1>
+
+        <p class="success-subtitle">
+            Спасибо за покупку в нашем книжном магазине! Ваш заказ принят в обработку.
+            {% if order.payment_method == 'ONLINE' %}
+                Ссылка для оплаты была отправлена на ваш email.
+            {% endif %}
+        </p>
+
+        <div class="order-number">
+            Номер заказа: #{{ order.id }}
+        </div>
+
+        <div class="order-info">
+            <div class="info-row">
+                <span class="info-label">Дата оформления:</span>
+                <span class="info-value">{{ order.created|date:"d.m.Y H:i" }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Статус:</span>
+                <span class="info-value">
+                    {% if order.status == 'PENDING' %}
+                        <span style="color: #f59e0b;">⏳ Ожидает обработки</span>
+                    {% elif order.status == 'PROCESSING' %}
+                        <span style="color: #3b82f6;">🔄 В обработке</span>
+                    {% elif order.status == 'SHIPPED' %}
+                        <span style="color: #10b981;">🚚 Отправлен</span>
+                    {% elif order.status == 'DELIVERED' %}
+                        <span style="color: #059669;">✅ Доставлен</span>
+                    {% else %}
+                        <span style="color: #ef4444;">❌ Отменен</span>
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Способ оплаты:</span>
+                <span class="info-value">{{ order.get_payment_method_display }}</span>
+            </div>
+
+            {% if order.payment_status %}
+            <div class="info-row">
+                <span class="info-label">Статус оплаты:</span>
+                <span class="info-value highlight">✅ Оплачено</span>
+            </div>
+            {% endif %}
+
+            {% if order.shipping_address %}
+            <div class="info-row">
+                <span class="info-label">Адрес доставки:</span>
+                <span class="info-value">{{ order.shipping_address }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if order.items.all %}
+        <div class="order-items">
+            <h3 style="text-align: left; margin-bottom: 1rem; color: #1f2937;">Состав заказа:</h3>
+
+            {% for item in order.items.all %}
+            <div class="order-item">
+                <div>
+                    <div class="item-title">{{ item.book.title }}</div>
+                    <div class="item-details">
+                        {{ item.quantity }} × {{ item.price }} ₽
+                        {% if item.book.authors %}
+                            | {{ item.book.authors }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="item-price">
+                    {{ item.total_price }} ₽
+                </div>
+            </div>
+            {% endfor %}
+
+            <div style="text-align: right; margin-top: 1rem;">
+                <div style="font-size: 0.95rem; color: #6b7280;">Общая сумма:</div>
+                <div class="total-amount">{{ order.total }} ₽</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="actions">
+            <a href="{% url 'index' %}" class="btn btn-primary">
+                <i class="fas fa-home"></i>
+                На главную
+            </a>
+
+            <a href="{% url 'order_history' %}" class="btn btn-secondary">
+                <i class="fas fa-history"></i>
+                История заказов
+            </a>
+
+            <a href="{% url 'book_list' %}" class="btn btn-success">
+                <i class="fas fa-book"></i>
+                Продолжить покупки
+            </a>
+        </div>
+
+        <div class="contact-info">
+            <p style="margin-bottom: 0.5rem;">
+                <strong>Нужна помощь?</strong>
+                Если у вас есть вопросы по заказу, свяжитесь с нашей службой поддержки:
+            </p>
+            <p style="margin: 0;">
+                📧 Email: <a href="mailto:support@bookstore.ru">support@bookstore.ru</a> |
+                📞 Телефон: <a href="tel:+78001234567">8 (800) 123-45-67</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,87 +1,22 @@
-{% extends "base.html" %}
-{% block title %}Главная{% endblock %}
+<!-- templates/thank_you.html -->
+{% extends 'base.html' %}
+
+{% block title %}Спасибо!{% endblock %}
+
 {% block content %}
-<h1>Добро пожаловать!</h1>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Спасибо за заказ!</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <style>
-        body {
-            background: linear-gradient(135deg, #f0f8ff, #e6f7ff);
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+<div class="card" style="text-align: center; padding: 3rem;">
+    <h1>🙏 Спасибо!</h1>
+    <p style="font-size: 1.2rem; margin: 2rem 0;">
+        Благодарим вас за посещение нашего книжного магазина!
+    </p>
+    <div style="font-size: 4rem; margin: 2rem 0;">📚</div>
+    <p>
+        Мы ценим каждого нашего клиента и надеемся, что вы нашли то, что искали.
+    </p>
 
-        .thank-you-card {
-            background: #ffffff;
-            border-radius: 15px;
-            padding: 40px 30px;
-            text-align: center;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            max-width: 600px;
-            width: 100%;
-        }
-
-        .thank-you-card h1 {
-            color: #ff6f61;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-
-        .thank-you-card p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-        }
-
-        .btn-home {
-            background-color: #ff6f61;
-            border-color: #ff6f61;
-            color: #fff;
-            font-size: 1.1rem;
-            padding: 12px 30px;
-            border-radius: 8px;
-            transition: background 0.3s;
-        }
-
-        .btn-home:hover {
-            background-color: #ff3b2e;
-            color: #fff;
-        }
-
-        .checkmark {
-            font-size: 4rem;
-            color: #28a745;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 576px) {
-            .thank-you-card h1 {
-                font-size: 2rem;
-            }
-            .thank-you-card p {
-                font-size: 1rem;
-            }
-            .btn-home {
-                font-size: 1rem;
-                padding: 10px 20px;
-            }
-        }
-    </style>
-</head>
-<body>
-<div class="thank-you-card">
-    <div class="checkmark">✔</div>
-    <h1>Спасибо за ваш заказ!</h1>
-    <p>Ваш заказ №{{ purchase.id }} был успешно создан.<br>
-       Мы свяжемся с вами для подтверждения и уточнения деталей доставки.</p>
-    <a href="{% url 'book_list' %}" class="btn btn-home">Вернуться к каталогу книг</a>
+    <div style="margin-top: 2rem;">
+        <a href="{% url 'index' %}" class="btn btn-primary">Вернуться на главную</a>
+        <a href="{% url 'book_list' %}" class="btn btn-secondary">Продолжить покупки</a>
+    </div>
 </div>
-</body>
-</html>
 {% endblock %}

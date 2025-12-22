@@ -1,21 +1,364 @@
-{% extends "base.html" %}
-{% block title %}Главная{% endblock %}
-{% block content %}
-<h1>Добро пожаловать!</h1>
-<div class="book-detail">
-    <h1>{{ book.title }}</h1>
-    {% if book.image %}
-        <img src="{{ book.image.url }}" alt="{{ book.title }}" class="book-image-large">
-    {% endif %}
-    <p><strong>Авторы:</strong>
-        {% for author in book.authors.all %}
-            {{ author.first_name }} {{ author.last_name }}{% if not forloop.last %}, {% endif %}
-        {% endfor %}
-    </p>
-    <p><strong>Цена:</strong> {{ book.price }} руб.</p>
-    <p><strong>Категория:</strong> {{ book.category.name }}</p>
-    <p>{{ book.description }}</p>
+cat > templates/book_detail.html << 'EOF'
+{% extends 'base.html' %}
+{% load static %}
 
-    <a href="{% url 'buy_book_form' %}?book_id={{ book.id }}" class="btn btn-success">Купить эту книгу</a>
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.book-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.book-detail-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+}
+
+.book-detail-header {
+    padding: 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    position: relative;
+}
+
+.book-detail-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.book-detail-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.book-detail-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    padding: 40px;
+}
+
+@media (max-width: 768px) {
+    .book-detail-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+.book-images {
+    position: sticky;
+    top: 20px;
+}
+
+.main-image {
+    width: 100%;
+    height: 500px;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 6rem;
+}
+
+.image-thumbnails {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.thumbnail {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.thumbnail:hover,
+.thumbnail.active {
+    opacity: 1;
+    border-color: #3498db;
+    transform: scale(1.05);
+}
+
+.thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.book-info {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.info-section {
+    padding: 25px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.info-section h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.book-price-section {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: white;
+}
+
+.price-main {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.price-old {
+    font-size: 1.5rem;
+    text-decoration: line-through;
+    opacity: 0.8;
+    margin-left: 15px;
+}
+
+.stock-status {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 700;
+    margin-top: 15px;
+}
+
+.in-stock {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.book-actions-detail {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-buy-large {
+    flex: 2;
+    padding: 20px;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.btn-wishlist {
+    flex: 1;
+    background: #6c757d;
+    color: white;
+    padding: 20px;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.book-description {
+    line-height: 1.8;
+    color: #34495e;
+}
+
+.book-specs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.spec-item {
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+}
+
+.spec-label {
+    font-weight: 600;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.spec-value {
+    font-size: 1.1rem;
+    color: #2c3e50;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #3498db;
+    text-decoration: none;
+    margin-bottom: 30px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.back-link:hover {
+    background: #3498db;
+    color: white;
+    transform: translateX(-5px);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="book-detail-container">
+    <a href="{% url 'book_list' %}" class="back-link">
+        ← Вернуться к каталогу
+    </a>
+    
+    <div class="book-detail-card">
+        <div class="book-detail-header">
+            <h1>{{ book.title }}</h1>
+            <p class="book-detail-subtitle">{{ book.authors }}</p>
+        </div>
+        
+        <div class="book-detail-content">
+            <div class="book-images">
+                <div class="main-image">
+                    {% if book.image %}
+                    <img id="mainImage" src="{{ book.image.url }}" alt="{{ book.title }}">
+                    {% else %}
+                    <div class="image-placeholder">
+                        📖
+                    </div>
+                    {% endif %}
+                </div>
+                
+                {% if book.image %}
+                <div class="image-thumbnails">
+                    <div class="thumbnail active" onclick="changeImage('{{ book.image.url }}')">
+                        <img src="{{ book.image.url }}" alt="{{ book.title }}">
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="book-info">
+                <div class="info-section book-price-section">
+                    <div class="price-main">{{ book.price }} ₽</div>
+                    
+                    <div class="stock-status in-stock">
+                        {% if book.stock > 10 %}
+                            ✅ В наличии ({{ book.stock }} шт.)
+                        {% elif book.stock > 0 %}
+                            ⚠️ Мало осталось ({{ book.stock }} шт.)
+                        {% else %}
+                            ❌ Нет в наличии
+                        {% endif %}
+                    </div>
+                    
+                    <div class="book-actions-detail">
+                        {% if book.stock > 0 %}
+                       <a href="{% url 'buy_book_item' book_id=book.id %}" class="btn btn-success btn-buy-large">
+                            🛒 Купить сейчас
+                        </a>
+                        {% endif %}
+                        <button class="btn btn-wishlist" onclick="addToWishlist()">
+                            ❤️ В избранное
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <h3>📖 Описание</h3>
+                    <p class="book-description">
+                        {{ book.description|default:"Описание отсутствует."|linebreaks }}
+                    </p>
+                </div>
+                
+                <div class="info-section">
+                    <h3>📋 Характеристики</h3>
+                    <div class="book-specs">
+                        <div class="spec-item">
+                            <div class="spec-label">Категория</div>
+                            <div class="spec-value">{{ book.category.name|default:"Не указана" }}</div>
+                        </div>
+                        
+                        <div class="spec-item">
+                            <div class="spec-label">Тип обложки</div>
+                            <div class="spec-value">{{ book.get_cover_type_display }}</div>
+                        </div>
+                        
+                        <div class="spec-item">
+                            <div class="spec-label">Количество страниц</div>
+                            <div class="spec-value">{{ book.pages }} стр.</div>
+                        </div>
+                        
+                        <div class="spec-item">
+                            <div class="spec-label">Год издания</div>
+                            <div class="spec-value">{{ book.publication_year|default:"Не указан" }}</div>
+                        </div>
+                        
+                        {% if book.isbn %}
+                        <div class="spec-item">
+                            <div class="spec-label">ISBN</div>
+                            <div class="spec-value">{{ book.isbn }}</div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="spec-item">
+                            <div class="spec-label">Издательство</div>
+                            <div class="spec-value">{{ book.publisher|default:"Не указано" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+function changeImage(src) {
+    document.getElementById('mainImage').src = src;
+    
+    // Обновляем активный thumbnail
+    document.querySelectorAll('.thumbnail').forEach(thumb => {
+        thumb.classList.remove('active');
+    });
+    event.target.closest('.thumbnail').classList.add('active');
+}
+
+function addToWishlist() {
+    alert('Книга добавлена в избранное!');
+    // Здесь можно добавить AJAX запрос
+}
+</script>
 {% endblock %}

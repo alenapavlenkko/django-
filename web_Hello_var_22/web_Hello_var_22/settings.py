@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -9,7 +9,7 @@ SECRET_KEY = 'django-insecure-l51ta629h$j3ky)+!%3r531gtxvnfr+g!ihcz=on!+le+xr$nw
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+AUTH_USER_MODEL = 'firstapp_var_22.User'
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -54,7 +54,7 @@ WSGI_APPLICATION = 'web_Hello_var_22.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'bookshop_db',
+        'NAME': 'bookshop_fresh',
         'USER': 'bookshop_user',
         'PASSWORD': 'secure_password_123',
         'HOST': 'localhost',
@@ -96,7 +96,21 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'   # если BASE_DIR — Path
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_DIRS = [BASE_DIR / "static"]  # Исходные файлы
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# Для разработки: обслуживание статических файлов
+if DEBUG:
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static',
+    ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+os.makedirs(BASE_DIR / 'media/books', exist_ok=True)
+os.makedirs(BASE_DIR / 'media/authors', exist_ok=True)
+os.makedirs(BASE_DIR / 'media/users', exist_ok=True)

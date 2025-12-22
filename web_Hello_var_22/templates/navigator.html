@@ -1,88 +1,63 @@
-{% extends "base.html" %}
-{% block title %}Навигатор{% endblock %}
+cat > templates/navigator.html << 'EOF'
+{% extends 'base.html' %}
+
+{% block title %}Навигатор по сайту{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="mb-4 text-danger">Навигатор</h1>
-    <p class="mb-4">Быстрые ссылки на страницы и примеры ручного ввода:</p>
-
-    <!-- Карточки ссылок -->
-    <div class="row g-4 mb-5">
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm nav-card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Список книг</h5>
-                    <p class="card-text">Посмотреть все книги в магазине.</p>
-                    <a href="{% url 'book_list' %}" class="btn btn-primary">Перейти</a>
-                </div>
+<div class="card">
+    <h1 class="card-title">🧭 Навигатор по сайту</h1>
+    
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <h3>📚 Книги</h3>
+                <ul>
+                    <li><a href="{% url 'book_list' %}">Список всех книг</a></li>
+                    <li><a href="{% url 'buy_book' %}">Купить книгу</a></li>
+                </ul>
             </div>
         </div>
-
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm nav-card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Список книг (страница 1)</h5>
-                    <p class="card-text">Первая страница каталога книг.</p>
-                    <a href="{% url 'book_list_page' page=1 %}" class="btn btn-primary">Перейти</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm nav-card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Список книг (страница 2)</h5>
-                    <p class="card-text">Вторая страница каталога книг.</p>
-                    <a href="{% url 'book_list_page' page=2 %}" class="btn btn-primary">Перейти</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm nav-card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Таблицы (tablica)</h5>
-                    <p class="card-text">Просмотр данных в виде таблиц.</p>
-                    <a href="{% url 'tablica_display' %}" class="btn btn-primary">Перейти</a>
-                </div>
+        
+        <div class="col">
+            <div class="card">
+                <h3>📊 Аналитика</h3>
+                <ul>
+                    <li><a href="{% url 'order_analysis' %}">Анализ заказов</a></li>
+                    <li><a href="{% url 'export_orders' %}">Экспорт заказов (CSV)</a></li>
+                    <li><a href="{% url 'analysis' %}">Общий анализ</a></li>
+                </ul>
             </div>
         </div>
     </div>
-
-    <!-- Ручной ввод примеров -->
-    <h3 class="mb-3 text-secondary">Ручной ввод примеров:</h3>
-    <ul class="list-group list-group-flush mb-5">
-        <li class="list-group-item">Пример re_path: /book/Название-книги/</li>
-        <li class="list-group-item">Пример re_path с годом: /book/Название-книги/2021/</li>
-        <li class="list-group-item">Пример query string: /books/?q=python&per=5</li>
-    </ul>
-
-    <a href="{% url 'index' %}" class="btn btn-success">Вернуться на главную</a>
+    
+    <div class="row" style="margin-top: 20px;">
+        <div class="col">
+            <div class="card">
+                <h3>📋 Таблицы</h3>
+                <ul>
+                    <li><a href="{% url 'tablica_csv' %}">Таблица из CSV</a></li>
+                    <li><a href="{% url 'tablica_txt' %}">Таблица из TXT</a></li>
+                    <li><a href="{% url 'tablica_xlsx' %}">Таблица из Excel</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col">
+            <div class="card">
+                <h3>👤 Пользователь</h3>
+                <ul>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'order_history' %}">Мои заказы</a></li>
+                        <li><a href="{% url 'logout' %}">Выйти ({{ user.username }})</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Войти в систему</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'reviews' %}">Отзывы</a></li>
+                    <li><a href="{% url 'thank_you' %}">Благодарности</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
-
-<style>
-.nav-card {
-    border-radius: 12px;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.nav-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.card-title {
-    font-weight: 600;
-    color: #ff6f61;
-}
-
-.card-text {
-    font-size: 0.95rem;
-    color: #555;
-}
-
-.list-group-item {
-    font-size: 0.95rem;
-}
-</style>
 {% endblock %}
+EOF

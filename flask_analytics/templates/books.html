@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Книги{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">📚 Книги ({{ total_books }})</h1>
+
+<!-- Фильтры -->
+<div class="card mb-4">
+    <div class="card-header">Фильтры</div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" name="search"
+                       placeholder="Поиск по названию или автору"
+                       value="{{ search }}">
+            </div>
+            <div class="col-md-2">
+                <select class="form-control" name="category">
+                    <option value="all">Все категории</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}"
+                            {% if category == cat %}selected{% endif %}>
+                        {{ cat }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="number" class="form-control" name="min_price"
+                       placeholder="Мин. цена" value="{{ min_price }}" step="0.01">
+            </div>
+            <div class="col-md-2">
+                <input type="number" class="form-control" name="max_price"
+                       placeholder="Макс. цена" value="{{ max_price }}" step="0.01">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Фильтровать</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Список книг -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Список книг</span>
+        <a href="/export/books/csv" class="btn btn-sm btn-success">📥 Экспорт CSV</a>
+    </div>
+    <div class="card-body">
+        {% if books %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Автор</th>
+                        <th>Категория</th>
+                        <th>Цена</th>
+                        <th>Остаток</th>
+                        <th>Год</th>
+                        <th>Доступность</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr>
+                        <td>{{ book.title }}</td>
+                        <td>{{ book.authors }}</td>
+                        <td>{{ book.category_name }}</td>
+                        <td>{{ "%.2f"|format(book.price|float|default(0)) }} ₽</td>
+                        <td>
+                            <span class="badge bg-{% if book.stock > 10 %}success{% elif book.stock > 0 %}warning{% else %}danger{% endif %}">
+                                {{ book.stock }} шт.
+                            </span>
+                        </td>
+                        <td>{{ book.publication_year or '-' }}</td>
+                        <td>
+                            {% if book.available %}
+                            <span class="badge bg-success">Доступна</span>
+                            {% else %}
+                            <span class="badge bg-danger">Нет в наличии</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Пагинация -->
+        {% if total_pages > 1 %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page-1 }}&search={{ search }}&category={{ category }}&min_price={{ min_price }}&max_price={{ max_price }}">
+                        Назад
+                    </a>
+                </li>
+                {% endif %}
+
+                <li class="page-item active">
+                    <span class="page-link">
+                        Страница {{ page }} из {{ total_pages }}
+                    </span>
+                </li>
+
+                {% if page < total_pages %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page+1 }}&search={{ search }}&category={{ category }}&min_price={{ min_price }}&max_price={{ max_price }}">
+                        Вперед
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <div class="text-center py-4">
+            <h4 class="text-muted">Книги не найдены</h4>
+            <p class="text-muted">Измените параметры фильтрации</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Информация -->
+<div class="card mt-4">
+    <div class="card-header">
+        О разделе "Книги"
+    </div>
+    <div class="card-body">
+        <p>В этом разделе вы можете:</p>
+        <ul>
+            <li>Просматривать полный каталог книг</li>
+            <li>Искать книги по названию или автору</li>
+            <li>Фильтровать книги по категориям и цене</li>
+            <li>Видеть остатки товаров на складе</li>
+            <li>Экспортировать данные в CSV формат</li>
+        </ul>
+        <p><strong>Источник данных:</strong> таблица <code>firstapp_var_22_book</code></p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,5 @@
+id,created,status,total,payment_method,username,email,items_count
+6,2025-12-21 23:26:36.358531+03:00,PENDING,2499.99,CARD,alena,alena.ray2005@gmail.com,1
+5,2025-12-21 23:21:54.928967+03:00,PENDING,2499.99,CARD,alena,alena.ray2005@gmail.com,1
+4,2025-12-21 23:12:17.334980+03:00,PENDING,2499.99,CARD,alena,alena.ray2005@gmail.com,1
+3,2025-12-21 22:55:57.689860+03:00,PENDING,699.99,CARD,alena,alena.ray2005@gmail.com,1

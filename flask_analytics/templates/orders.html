@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Заказы{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">🛒 Заказы ({{ total_orders }})</h1>
+
+<!-- Фильтры -->
+<div class="card mb-4">
+    <div class="card-header">Фильтры</div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-2">
+                <select class="form-control" name="status">
+                    <option value="all">Все статусы</option>
+                    <option value="pending" {% if status == 'pending' %}selected{% endif %}>В обработке</option>
+                    <option value="completed" {% if status == 'completed' %}selected{% endif %}>Завершен</option>
+                    <option value="cancelled" {% if status == 'cancelled' %}selected{% endif %}>Отменен</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="date" class="form-control" name="date_from" value="{{ date_from }}">
+            </div>
+            <div class="col-md-3">
+                <input type="date" class="form-control" name="date_to" value="{{ date_to }}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Фильтровать</button>
+            </div>
+            <div class="col-md-2">
+                <a href="/orders" class="btn btn-secondary w-100">Сбросить</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Список заказов -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Список заказов</span>
+        <a href="/export/orders/csv" class="btn btn-sm btn-success">📥 Экспорт CSV</a>
+    </div>
+    <div class="card-body">
+        {% if orders %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Дата</th>
+                        <th>Клиент</th>
+                        <th>Товары</th>
+                        <th>Сумма</th>
+                        <th>Статус</th>
+                        <th>Оплата</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>#{{ order.id }}</td>
+                        <td>{{ order.created|dateformat }}</td>
+                        <td>
+                            {{ order.username or 'Гость' }}
+                            {% if order.email %}
+                            <br><small class="text-muted">{{ order.email }}</small>
+                            {% endif %}
+                        </td>
+                        <td>{{ order.items_count }} шт.</td>
+                        <td>{{ "%.2f"|format(order.total|float|default(0)) }} ₽</td>
+                        <td>
+                            {% if order.status == 'completed' %}
+                            <span class="badge bg-success">Завершен</span>
+                            {% elif order.status == 'pending' %}
+                            <span class="badge bg-warning">В обработке</span>
+                            {% elif order.status == 'cancelled' %}
+                            <span class="badge bg-danger">Отменен</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ order.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ order.payment_method or '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Пагинация -->
+        {% if total_pages > 1 %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page-1 }}&status={{ status }}&date_from={{ date_from }}&date_to={{ date_to }}">
+                        Назад
+                    </a>
+                </li>
+                {% endif %}
+
+                <li class="page-item active">
+                    <span class="page-link">
+                        Страница {{ page }} из {{ total_pages }}
+                    </span>
+                </li>
+
+                {% if page < total_pages %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page+1 }}&status={{ status }}&date_from={{ date_from }}&date_to={{ date_to }}">
+                        Вперед
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <div class="text-center py-4">
+            <h4 class="text-muted">Заказы не найдены</h4>
+            <p class="text-muted">Измените параметры фильтрации</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Статистика -->
+<div class="card mt-4">
+    <div class="card-header">
+        Статистика заказов
+    </div>
+    <div class="card-body">
+        <p>В этом разделе вы можете:</p>
+        <ul>
+            <li>Просматривать историю всех заказов</li>
+            <li>Фильтровать заказы по статусу и дате</li>
+            <li>Видеть информацию о клиентах и суммах заказов</li>
+            <li>Анализировать популярные товары</li>
+            <li>Экспортировать данные для дальнейшего анализа</li>
+        </ul>
+        <p><strong>Источник данных:</strong> таблица <code>firstapp_var_22_order</code></p>
+    </div>
+</div>
+{% endblock %}

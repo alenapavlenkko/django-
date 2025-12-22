@@ -2,117 +2,604 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Книжный магазин{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}📚 Книжный магазин | Мир литературы{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+
+    <!-- Основные стили -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    {% block extra_css %}{% endblock %}
+
     <style>
+        /* Дополнительные встроенные стили для базового шаблона */
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f7f9fc;
-            margin: 0;
-            padding: 0;
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            background-color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        header {
-            background-color: #ff6f61;
-            color: #fff;
-            padding: 15px 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        /* Навигация */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 0.75rem 0;
+            backdrop-filter: blur(10px);
         }
 
-        header h1 {
-            margin: 0;
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            max-width: 1400px;
+        }
+
+        .navbar-brand {
+            font-family: 'Merriweather', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: translateY(-2px);
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar-brand i {
             font-size: 1.8rem;
         }
 
-        nav {
-            margin-top: 10px;
-        }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
+        .navbar-nav {
             display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
+            list-style: none;
             margin: 0;
+            padding: 0;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
-        nav ul li {
-            display: inline;
+        .navbar-nav li {
+            display: flex;
+            align-items: center;
         }
 
-        nav ul li a {
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
-            color: #fff;
-            padding: 6px 12px;
-            border-radius: 6px;
-            transition: background 0.3s;
+            padding: 0.75rem 1.25rem;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-family: inherit;
         }
 
-        nav ul li a:hover {
-            background-color: #ff3b2e;
+        .nav-link:hover {
+            color: white;
+            transform: translateY(-2px);
         }
 
-        main {
-            padding: 30px 20px;
-            min-height: 70vh;
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
+        .nav-link i {
+            font-size: 1.1rem;
+        }
+
+        .user-greeting {
+            font-weight: 600;
+            color: var(--secondary);
+            margin-left: 0.5rem;
+        }
+
+        /* Стили для формы выхода */
+        .logout-form {
+            display: inline;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Основной контент */
+        main.container {
+            flex: 1;
+            padding: 2.5rem 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Сообщения */
+        .messages {
+            margin-bottom: 2rem;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert {
+            padding: 1.25rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: var(--shadow);
+            border-left: 5px solid;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #d1fae5, #ecfdf5);
+            border-left-color: var(--accent);
+            color: #065f46;
+        }
+
+        .alert-error, .alert-danger {
+            background: linear-gradient(135deg, #fee2e2, #fef2f2);
+            border-left-color: #ef4444;
+            color: #7f1d1d;
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, #fef3c7, #fffbeb);
+            border-left-color: var(--secondary);
+            color: #92400e;
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            border-left-color: #3b82f6;
+            color: #1e40af;
+        }
+
+        .alert i {
+            font-size: 1.5rem;
+        }
+
+        /* Подвал */
         footer {
+            background: linear-gradient(135deg, var(--dark), #0f172a);
+            color: white;
+            padding: 3rem 0 2rem;
+            margin-top: auto;
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        footer .container {
+            max-width: 1400px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .footer-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-links a i {
+            width: 20px;
+        }
+
+        .copyright {
+            grid-column: 1 / -1;
             text-align: center;
-            padding: 15px 0;
-            background-color: #343a40;
-            color: #fff;
-            margin-top: 30px;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 992px) {
+            .navbar .container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .navbar-nav {
+                justify-content: center;
+            }
+
+            .nav-link {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
         }
 
         @media (max-width: 768px) {
-            nav ul {
+            .navbar-nav {
                 flex-direction: column;
-                gap: 5px;
+                width: 100%;
+                align-items: center;
             }
 
-            header h1 {
-                font-size: 1.5rem;
+            .navbar-nav li {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            main.container {
+                padding: 1.5rem 1rem;
+            }
+
+            footer .container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-links a {
+                justify-content: center;
+            }
+        }
+
+        /* Кнопка для мобильного меню (дополнительно) */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+                position: absolute;
+                right: 1.5rem;
+                top: 1rem;
+            }
+
+            .navbar .container {
+                align-items: flex-start;
+            }
+
+            .navbar-nav {
+                display: none;
+                width: 100%;
+                margin-top: 1rem;
+            }
+
+            .navbar-nav.active {
+                display: flex;
             }
         }
     </style>
-    {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <header>
+    <!-- Навигация -->
+    <nav class="navbar">
         <div class="container">
-            <h1>Книжный магазин — Вариант 22</h1>
-            <nav>
-                <ul>
-                    <li><a href="{% url 'index' %}">Главная</a></li>
-                    <li><a href="{% url 'navigator' %}">Навигатор</a></li>
-                    <li><a href="{% url 'book_list' %}">Список книг</a></li>
-                    <li><a href="{% url 'products_demo' %}">Каталог из файлов</a></li>
-                    <li><a href="{% url 'reviews' %}">Отзывы</a></li>
-                    <li><a href="{% url 'analysis' %}">Анализ заказов</a></li>
-                    <li><a href="{% url 'buy_book' %}">Купить книгу</a></li>
-                    <li><a href="{% url 'tablica_csv' %}">Таблицы</a></li>
-                    <li><a href="{% url 'export_orders' %}">Экспорт заказов</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <i class="fas fa-book"></i>
+                <span>Книжный магазин</span>
+            </a>
 
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Открыть меню">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="navbar-nav" id="navbarNav">
+                <li>
+                    <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'index' %}">
+                        <i class="fas fa-home"></i>
+                        <span>Главная</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link {% if 'books' in request.path %}active{% endif %}" href="{% url 'book_list' %}">
+                        <i class="fas fa-book-open"></i>
+                        <span>Книги</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link {% if 'buy' in request.path %}active{% endif %}" href="{% url 'buy_book' %}">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Купить</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link {% if 'navigator' in request.path %}active{% endif %}" href="{% url 'navigator' %}">
+                        <i class="fas fa-compass"></i>
+                        <span>Навигатор</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link {% if 'products' in request.path %}active{% endif %}" href="{% url 'products_demo' %}">
+                        <i class="fas fa-th-list"></i>
+                        <span>Каталог</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link {% if 'reviews' in request.path %}active{% endif %}" href="{% url 'reviews' %}">
+                        <i class="fas fa-star"></i>
+                        <span>Отзывы</span>
+                    </a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li>
+                        <a class="nav-link" href="{% url 'order_history' %}">
+                            <i class="fas fa-history"></i>
+                            <span>Мои заказы</span>
+                        </a>
+                    </li>
+                    <li>
+                        <!-- Форма для выхода через POST -->
+                        <form method="post" action="{% url 'logout' %}" class="logout-form">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-link" style="background: none; border: none; cursor: pointer;">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Выйти</span>
+                                <span class="user-greeting">({{ user.username }})</span>
+                            </button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li>
+                        <a class="nav-link" href="{% url 'login' %}">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Войти</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
     <main class="container">
-        {% block content %}{% endblock %}
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {% if message.tags == 'success' %}
+                            <i class="fas fa-check-circle"></i>
+                        {% elif message.tags == 'error' or message.tags == 'danger' %}
+                            <i class="fas fa-exclamation-circle"></i>
+                        {% elif message.tags == 'warning' %}
+                            <i class="fas fa-exclamation-triangle"></i>
+                        {% else %}
+                            <i class="fas fa-info-circle"></i>
+                        {% endif %}
+                        <div>{{ message }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        <!-- Содержимое страницы будет здесь -->
+        {% endblock %}
     </main>
 
+    <!-- Подвал -->
     <footer>
         <div class="container">
-            <p>&copy; 2025 Книжный магазин. Все права защищены.</p>
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <i class="fas fa-book-reader"></i>
+                    О магазине
+                </h3>
+                <p style="color: rgba(255, 255, 255, 0.8); line-height: 1.6;">
+                    Мы предлагаем лучшие книги от классики до современных бестселлеров.
+                    Более 10 000 наименований в нашем каталоге.
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <i class="fas fa-link"></i>
+                    Быстрые ссылки
+                </h3>
+                <div class="footer-links">
+                    <a href="{% url 'index' %}">
+                        <i class="fas fa-home"></i>
+                        Главная
+                    </a>
+                    <a href="{% url 'book_list' %}">
+                        <i class="fas fa-book-open"></i>
+                        Все книги
+                    </a>
+                    <a href="{% url 'products_demo' %}">
+                        <i class="fas fa-th-list"></i>
+                        Каталог
+                    </a>
+                    <a href="{% url 'reviews' %}">
+                        <i class="fas fa-star"></i>
+                        Отзывы
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <i class="fas fa-cog"></i>
+                    Инструменты
+                </h3>
+                <div class="footer-links">
+                    <a href="{% url 'analysis' %}">
+                        <i class="fas fa-chart-bar"></i>
+                        Аналитика
+                    </a>
+                    <a href="{% url 'export_orders' %}">
+                        <i class="fas fa-download"></i>
+                        Экспорт данных
+                    </a>
+                    <a href="{% url 'navigator' %}">
+                        <i class="fas fa-compass"></i>
+                        Навигатор
+                    </a>
+                    <a href="{% url 'thank_you' %}">
+                        <i class="fas fa-heart"></i>
+                        Спасибо за посещение!
+                    </a>
+                </div>
+            </div>
+
+            <div class="copyright">
+                <p>&copy; 2025 Книжный магазин. Все права защищены.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+                    С любовью к книгам и читателям
+                </p>
+            </div>
         </div>
     </footer>
 
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-    {% block extra_scripts %}{% endblock %}
+    <!-- JavaScript для мобильного меню -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Мобильное меню
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const navbarNav = document.getElementById('navbarNav');
+
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    navbarNav.classList.toggle('active');
+
+                    // Меняем иконку
+                    const icon = this.querySelector('i');
+                    if (navbarNav.classList.contains('active')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+            }
+
+            // Закрытие меню при клике на ссылку (для мобильных)
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        navbarNav.classList.remove('active');
+                        const icon = mobileMenuToggle.querySelector('i');
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+            });
+
+            // Автоматическое скрытие сообщений через 5 секунд
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-10px)';
+                    alert.style.transition = 'all 0.5s ease';
+
+                    setTimeout(() => {
+                        alert.style.display = 'none';
+                    }, 500);
+                }, 5000);
+            });
+
+            // Подтверждение выхода (опционально)
+            const logoutForms = document.querySelectorAll('.logout-form');
+            logoutForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    if (!confirm('Вы уверены, что хотите выйти?')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

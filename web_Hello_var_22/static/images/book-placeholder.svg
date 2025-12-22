@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+    <rect width="400" height="600" fill="#f0f0f0"/>
+    <rect x="50" y="50" width="300" height="500" fill="#ffffff" stroke="#cccccc" stroke-width="2"/>
+    <text x="200" y="300" text-anchor="middle" font-family="Arial" font-size="24" fill="#999999">📚</text>
+    <text x="200" y="340" text-anchor="middle" font-family="Arial" font-size="18" fill="#666666">Книга</text>
+</svg>
